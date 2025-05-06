@@ -39,7 +39,7 @@ class LoginViewModel @Inject constructor(
     fun clearError(){
         viewModelScope.launch {
             _state.update { currentState ->
-                currentState.copy(error = "")
+                currentState.copy(error = null)
             }
         }
     }

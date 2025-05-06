@@ -23,6 +23,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.seasistemi.esempiostruttura.data.repository.PokemonRepository
 import com.seasistemi.esempiostruttura.domain.AppUseCases
 import com.seasistemi.esempiostruttura.ui.screen.login.LoginScreen
@@ -30,6 +31,8 @@ import com.seasistemi.esempiostruttura.ui.screen.login.LoginViewModel
 import kotlinx.serialization.Serializable
 import com.seasistemi.esempiostruttura.ui.screen.dashboard.DashboardViewModel
 import com.seasistemi.esempiostruttura.ui.screen.dashboard.DashboardScreen
+import com.seasistemi.esempiostruttura.ui.screen.dettagliopokemon.DettaglioPokemonScreen
+import com.seasistemi.esempiostruttura.ui.screen.dettagliopokemon.DettaglioPokemonViewModel
 import kotlinx.coroutines.launch
 
 @Serializable
@@ -37,6 +40,9 @@ object LoginScreen
 
 @Serializable
 object DashboardScreen
+
+@Serializable
+data class DettaglioPokemonScreen(val nome : String)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,15 +58,15 @@ fun Navigation(){
                 snackbar = { Snackbar { Text(it.visuals.message) } }
             )
         },
-        floatingActionButton = {
-            FloatingActionButton(onClick = {
-                coroutineScope.launch {
-                    snackbarHostState.showSnackbar("click su fab", duration = SnackbarDuration.Short)
-                }
-            }) {
-                Icon(Icons.Default.Add,null)
-            }
-        }
+//        floatingActionButton = {
+//            FloatingActionButton(onClick = {
+//                coroutineScope.launch {
+//                    snackbarHostState.showSnackbar("click su fab", duration = SnackbarDuration.Short)
+//                }
+//            }) {
+//                Icon(Icons.Default.Add,null)
+//            }
+//        }
     ) {  padding ->
         NavHost(
             modifier = Modifier.padding(padding),
@@ -91,7 +97,17 @@ fun Navigation(){
                         navController.navigate(LoginScreen) {
                             popUpTo(LoginScreen) { inclusive = true }
                         }
+                    },
+                    navigateToDettaglioPokemon ={ nome ->
+                        navController.navigate(route = DettaglioPokemonScreen(nome = nome))
                     }
+                )
+            }
+            composable<DettaglioPokemonScreen> { backStackEntry ->
+                val viewModel: DettaglioPokemonViewModel = hiltViewModel()
+//                val pokemon = backStackEntry.toRoute<DettaglioPokemonScreen>()
+                DettaglioPokemonScreen(
+                    viewModel = viewModel,
                 )
             }
 

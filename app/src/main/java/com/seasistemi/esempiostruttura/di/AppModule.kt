@@ -5,6 +5,7 @@ import com.seasistemi.esempiostruttura.data.datasource.pokemonApi.PokemonRemoteD
 import com.seasistemi.esempiostruttura.data.repository.PokemonRepository
 import com.seasistemi.esempiostruttura.domain.AppUseCases
 import com.seasistemi.esempiostruttura.domain.GetListaPokemon
+import com.seasistemi.esempiostruttura.domain.GetPokemon
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,7 +36,8 @@ object AppModule {
         pokemonRepository: PokemonRepository
     ): AppUseCases {
         return AppUseCases(
-            getListaPokemon = GetListaPokemon(pokemonRepository)
+            getListaPokemon = GetListaPokemon(pokemonRepository),
+            getPokemon = GetPokemon(pokemonRepository)
         )
     }
 }
