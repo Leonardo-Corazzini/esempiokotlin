@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ExitToApp
@@ -35,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.HorizontalAlignmentLine
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
@@ -97,16 +99,25 @@ fun DashboardScreen(
             }
         )
         var searchValue by remember  { mutableStateOf("") }
+        val listState = rememberLazyListState()
+        val focusManager = LocalFocusManager.current
+        LaunchedEffect(listState.isScrollInProgress) {
+            if (listState.isScrollInProgress) {
+                focusManager.clearFocus()
+            }
+        }
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth().padding(5.dp),
+            maxLines = 1,
+            modifier = Modifier.fillMaxWidth(0.3f).padding(5.dp),
             value = searchValue,
             onValueChange = { valoreAggiornato -> searchValue=valoreAggiornato}
         )
-        LazyColumn {
+
+        LazyColumn(
+            state = listState
+        ) {
             items(uiState.pokemonList.filter { pokemon ->
-                if (searchValue == "") true else {
-                    pokemon.nome.contains(searchValue)
-                }
+                searchValue.isBlank() || pokemon.nome.contains(searchValue)
             }){ pokemon ->
                 Card(
                     modifier = Modifier.fillMaxWidth().clickable { navigateToDettaglioPokemon(pokemon.nome) },
